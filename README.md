@@ -1,5 +1,8 @@
 # Local Music Player
 
+![](UI/Snipaste_2023-02-11_17-16-23.png)
+![](UI/Snipaste_2023-02-11_17-16-41.png)
+
 ## 开发任务列表
 
 - [x] 添加音乐
