@@ -1,0 +1,19 @@
+html,
+body {
+    height: 100%;
+    /* border-radius: 50px; */
+    /* overflow: hidden; */
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+#app {
+    -webkit-app-region: drag;
+    /*支持拖放*/
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #fff;
+}

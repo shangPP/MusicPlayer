@@ -1,0 +1,99 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3879397 */
+  src: url('iconfont.woff2?t=1676019754981') format('woff2'),
+       url('iconfont.woff?t=1676019754981') format('woff'),
+       url('iconfont.ttf?t=1676019754981') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-delete:before {
+  content: "\ea16";
+}
+
+.icon-prev:before {
+  content: "\ea87";
+}
+
+.icon-next:before {
+  content: "\ea8a";
+}
+
+.icon-pause-full:before {
+  content: "\ea8c";
+}
+
+.icon-play-full:before {
+  content: "\ea8d";
+}
+
+.icon-play:before {
+  content: "\ea8e";
+}
+
+.icon-double-arrow-down-full:before {
+  content: "\ea4e";
+}
+
+.icon-double-arrow-up-full:before {
+  content: "\ea51";
+}
+
+.icon-window-close-full:before {
+  content: "\e9bb";
+}
+
+.icon-window-normal-full:before {
+  content: "\e9bc";
+}
+
+.icon-window-min-full:before {
+  content: "\e9bd";
+}
+
+.icon-yinliang:before {
+  content: "\e698";
+}
+
+.icon-liebiaoxunhuan:before {
+  content: "\e6a2";
+}
+
+.icon-SanMiAppoutlinei1:before {
+  content: "\e69a";
+}
+
+.icon-piliangcaozuo:before {
+  content: "\e645";
+}
+
+.icon-shezhi:before {
+  content: "\e8b7";
+}
+
+.icon-SanMiAppoutlinei:before {
+  content: "\e697";
+}
+
+.icon-bofangzhong:before {
+  content: "\e68f";
+}
+
+.icon-gengduo:before {
+  content: "\e690";
+}
+
+.icon-bofangliebiao:before {
+  content: "\e696";
+}
+
+.icon-bofangduilie:before {
+  content: "\e699";
+}
+

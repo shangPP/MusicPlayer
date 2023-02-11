@@ -1,0 +1,156 @@
+{
+  "id": "3879397",
+  "name": "local-music-player",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "18171139",
+      "name": "垃圾桶,删除",
+      "font_class": "delete",
+      "unicode": "ea16",
+      "unicode_decimal": 59926
+    },
+    {
+      "icon_id": "18176515",
+      "name": "后退",
+      "font_class": "prev",
+      "unicode": "ea87",
+      "unicode_decimal": 60039
+    },
+    {
+      "icon_id": "18176536",
+      "name": "前进",
+      "font_class": "next",
+      "unicode": "ea8a",
+      "unicode_decimal": 60042
+    },
+    {
+      "icon_id": "18176543",
+      "name": "暂停",
+      "font_class": "pause-full",
+      "unicode": "ea8c",
+      "unicode_decimal": 60044
+    },
+    {
+      "icon_id": "18176556",
+      "name": "播放",
+      "font_class": "play-full",
+      "unicode": "ea8d",
+      "unicode_decimal": 60045
+    },
+    {
+      "icon_id": "18176557",
+      "name": "播放",
+      "font_class": "play",
+      "unicode": "ea8e",
+      "unicode_decimal": 60046
+    },
+    {
+      "icon_id": "18174927",
+      "name": "双箭头,双角符,下",
+      "font_class": "double-arrow-down-full",
+      "unicode": "ea4e",
+      "unicode_decimal": 59982
+    },
+    {
+      "icon_id": "18174967",
+      "name": "双箭头,双角符,上",
+      "font_class": "double-arrow-up-full",
+      "unicode": "ea51",
+      "unicode_decimal": 59985
+    },
+    {
+      "icon_id": "18170428",
+      "name": "关闭",
+      "font_class": "window-close-full",
+      "unicode": "e9bb",
+      "unicode_decimal": 59835
+    },
+    {
+      "icon_id": "18170430",
+      "name": "最大化",
+      "font_class": "window-normal-full",
+      "unicode": "e9bc",
+      "unicode_decimal": 59836
+    },
+    {
+      "icon_id": "18170438",
+      "name": "最小化",
+      "font_class": "window-min-full",
+      "unicode": "e9bd",
+      "unicode_decimal": 59837
+    },
+    {
+      "icon_id": "18960093",
+      "name": "音量",
+      "font_class": "yinliang",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "18965481",
+      "name": "列表循环",
+      "font_class": "liebiaoxunhuan",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    },
+    {
+      "icon_id": "5344798",
+      "name": "San Mi App outline i",
+      "font_class": "SanMiAppoutlinei1",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "22378766",
+      "name": "批量操作",
+      "font_class": "piliangcaozuo",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "11372694",
+      "name": "设置",
+      "font_class": "shezhi",
+      "unicode": "e8b7",
+      "unicode_decimal": 59575
+    },
+    {
+      "icon_id": "5344795",
+      "name": "San Mi App outline i",
+      "font_class": "SanMiAppoutlinei",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "18939003",
+      "name": "播放中",
+      "font_class": "bofangzhong",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
+      "icon_id": "18939004",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "18958846",
+      "name": "播放列表",
+      "font_class": "bofangliebiao",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "18960322",
+      "name": "播放队列",
+      "font_class": "bofangduilie",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    }
+  ]
+}
