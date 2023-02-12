@@ -14,13 +14,16 @@ class DataStore extends Store {
     super(settings);
     this.tracks = this.get("tracks") || []; //保存音乐文件信息
   }
+  // 保存音乐
   saveTracks() {
     this.set("tracks", this.tracks);
     return this;
   }
+  // 获取音乐
   getTracks() {
     return this.get("tracks") || [];
   }
+  // 添加音乐
   async addTracks(tracks) {
     // 添加并去重（取出没有保存的）
     // 获取歌曲信息
@@ -57,9 +60,31 @@ class DataStore extends Store {
       return this.saveTracks();
     })
   }
+  // 删除音乐
   deleteTrack(deletedId) {
     this.tracks = this.tracks.filter((item) => item.id !== deletedId);
     return this.saveTracks();
+  }
+  // 获取上一首音乐
+  getPrevTrack(track) {
+    let tracks = this.getTracks()
+    let index = tracks.findIndex(item => item.id === track.id)
+    if (index === 0) {
+      return tracks[tracks.length - 1]
+    } else {
+      return tracks[index - 1]
+    }
+  }
+  // 获取下一首音乐
+  getNextTrack(track) {
+    let tracks = this.getTracks()
+    if (!track) return tracks[0]
+    let index = tracks.findIndex(item => item.id === track.id)
+    if (index === tracks.length - 1) {
+      return tracks[0]
+    } else {
+      return tracks[index + 1]
+    }
   }
 }
 

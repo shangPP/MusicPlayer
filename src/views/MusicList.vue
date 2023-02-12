@@ -31,7 +31,7 @@
             <span :title="item.name">{{ item.name }}</span>
             <div
               class="music-btns"
-              v-show="isShowMusicBtns && item.id === currentIndex"
+              v-show="isShowMusicBtns && item.id === currentId"
             >
               <div class="iconfont icon-play" @click="handlePlay(item)"></div>
               <div
@@ -62,23 +62,22 @@ onMounted(async () => {
 const addMusicFile = async () => {
   musicFilesPath.value = await myApi.addMusic();
 };
-let currentIndex = ref("");
+
+let currentId = ref("");
 let currentMusic = reactive({});
 let isShowMusicBtns = ref(true);
 // 鼠标移入
 const handleEnter = (item) => {
-  // console.log(item);
-  currentIndex.value = item.id;
+  currentId.value = item.id;
 };
 // 鼠标移出
 const handleLeave = (item) => {
-  currentIndex.value = "";
+  currentId.value = "";
 };
 
 // 音乐播放
 const handlePlay = (item) => {
   currentMusic = item;
-
   bus.emit("musicInfo", item);
 };
 
@@ -86,6 +85,17 @@ const handlePlay = (item) => {
 const handleDelete = (item) => {
   // musicAudio.pause();
 };
+
+// 上一曲
+bus.on("preMusic", (data) => {
+  currentMusic = data;
+  currentId.value = data.id;
+});
+// 下一曲
+bus.on("nextMusic", (data) => {
+  currentMusic = data;
+  currentId.value = data.id;
+});
 </script>
 
 <style lang="less" scoped>

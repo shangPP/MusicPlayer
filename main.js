@@ -9,6 +9,7 @@ Menu.setApplicationMenu(null);
 
 
 require("./controller/addMusic");
+require("./controller/controlMusic");
 
 let win = null;
 

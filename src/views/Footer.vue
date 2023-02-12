@@ -11,7 +11,10 @@
             <img src="../assets/music.png" alt="" />
           </div>
           <div class="music-info">
-            <span>{{ currentMusic.name }}-{{ currentMusic.singer }}</span>
+            <span v-if="currentMusic.name"
+              >{{ currentMusic.name }}-{{ currentMusic.singer }}</span
+            >
+            <span v-else></span>
             <span>
               {{ convertDuration(currentTime) }} /
               {{
@@ -23,7 +26,11 @@
       </div>
       <div class="music-center">
         <div class="iconfont icon-prev" @click="prevHandle"></div>
-        <div class="iconfont icon-play-full" @click="toggleHandle"></div>
+        <div
+          class="iconfont"
+          :class="isPlay ? 'icon-pause-full' : 'icon-play-full'"
+          @click="toggleHandle"
+        ></div>
         <div class="iconfont icon-next" @click="nextHandle"></div>
       </div>
       <div class="music-right">
@@ -35,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, toRaw } from "vue";
 import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
 
@@ -55,6 +62,7 @@ bus.on("musicInfo", (data) => {
   currentMusic = data;
   musicAudio.src = data.path;
   musicAudio.play();
+  isPlay.value = true;
 });
 
 // 获取当前播放进度
@@ -73,11 +81,36 @@ musicAudio.ontimeupdate = (event) => {
 };
 
 // 播放上一首歌曲
-const prevHandle = () => {};
+const prevHandle = async () => {
+  currentMusic = await myApi.getPrevMusic(toRaw(currentMusic));
+  musicAudio.src = currentMusic.path;
+  musicAudio.play();
+
+  bus.emit("preMusic", currentMusic);
+};
 // 播放下一首歌曲
-const nextHandle = () => {};
+const nextHandle = async () => {
+  currentMusic = await myApi.getNextMusic(toRaw(currentMusic));
+  musicAudio.src = currentMusic.path;
+  musicAudio.play();
+
+  bus.emit("nextMusic", currentMusic);
+};
+
+let isPlay = ref(false);
 // 播放/暂停切换
-const toggleHandle = () => {};
+const toggleHandle = async () => {
+  isPlay.value = !isPlay.value;
+  if (isPlay.value) {
+    if (!musicAudio.src) {
+      currentMusic = await myApi.getNextMusic(toRaw(currentMusic));
+      musicAudio.src = currentMusic.path;
+    }
+    musicAudio.play();
+  } else {
+    musicAudio.pause();
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -128,6 +161,7 @@ const toggleHandle = () => {};
         width: 40px;
         height: 40px;
       }
+      &.icon-pause-full,
       &.icon-play-full {
         font-size: 42px;
         width: 50px;
