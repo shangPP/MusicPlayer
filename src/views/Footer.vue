@@ -77,6 +77,7 @@ musicAudio.ontimeupdate = (event) => {
   );
   if (currentMusic.time - musicAudio.currentTime < 0.1) {
     progressWidth.value = 100;
+    nextHandle();
   }
 };
 
