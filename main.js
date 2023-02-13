@@ -69,11 +69,11 @@ app.on("window-all-closed", () => {
 });
 
 // 最小化
-ipcMain.handle("window-min", () => {
+ipcMain.on("window-min", () => {
   win.minimize();
 });
 // 最大化
-ipcMain.handle("window-max", () => {
+ipcMain.on("window-max", () => {
   if (!win.isMaximized()) {
     win.maximize();
   } else {
@@ -82,6 +82,6 @@ ipcMain.handle("window-max", () => {
   }
 });
 // 关闭
-ipcMain.handle("window-close", () => {
+ipcMain.on("window-close", () => {
   win.close();
 });

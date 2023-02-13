@@ -2,15 +2,15 @@ const { contextBridge, ipcRenderer } = require("electron")
 
 // 最小化窗口
 const minWindow = () => {
-  ipcRenderer.invoke("window-min")
+  ipcRenderer.send("window-min")
 }
 // 最大化窗口
 const maxWindow = () => {
-  ipcRenderer.invoke("window-max")
+  ipcRenderer.send("window-max")
 }
 // 关闭窗口
 const closeWindow = () => {
-  ipcRenderer.invoke("window-close")
+  ipcRenderer.send("window-close")
 }
 // 添加音乐
 const addMusic = async (res) => {
@@ -28,6 +28,10 @@ const getPrevMusic = (currentMusic) => {
 const getNextMusic = (currentMusic) => {
   return ipcRenderer.invoke("on-nextMusic-event", currentMusic)
 }
+// 删除音乐
+const delMusic = (musicId) => {
+  return ipcRenderer.invoke("on-delMusic-event", musicId)
+}
 
 
 // 绑定到浏览器window上
@@ -38,5 +42,6 @@ contextBridge.exposeInMainWorld("myApi", {
   addMusic,
   getMusic,
   getPrevMusic,
-  getNextMusic
+  getNextMusic,
+  delMusic
 })

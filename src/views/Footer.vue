@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
     <!-- 进度条 -->
-    <div class="progress-container">
+    <div class="progress-container" @click="progressHandle">
       <div class="progress" :style="{ width: progressWidth + '%' }"></div>
     </div>
     <div class="footer-container">
@@ -34,7 +34,24 @@
         <div class="iconfont icon-next" @click="nextHandle"></div>
       </div>
       <div class="music-right">
-        <div class="iconfont icon-yinliang"></div>
+        <div
+          class="iconfont icon-yinliang"
+          title="调节音量"
+          @mouseenter="handleEnter"
+          @mouseleave="handleLeave"
+        >
+          <div class="volume" v-show="isShowVolume">
+            <div
+              class="iconfont icon-checkbox-minus-full"
+              @click="handleVolume('sub')"
+            ></div>
+            <div>{{ audioVolume }}</div>
+            <div
+              class="iconfont icon-checkbox-plus-full"
+              @click="handleVolume('add')"
+            ></div>
+          </div>
+        </div>
         <div class="iconfont icon-liebiaoxunhuan"></div>
       </div>
     </div>
@@ -47,7 +64,7 @@ import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
 
 import { useRouter } from "vue-router";
-
+// 路由跳转
 const router = useRouter();
 const gotoDetail = () => {
   router.replace("/detail");
@@ -112,6 +129,45 @@ const toggleHandle = async () => {
     musicAudio.pause();
   }
 };
+
+// 点击进度条进行跳转
+const progressHandle = (e) => {
+  e.stopPropagation();
+  // console.log(e);
+  // console.log(e.target.offsetWidth);
+  let currPoint = e.pageX;
+  let currWidth = e.target.offsetWidth;
+  console.log(currPoint / currWidth);
+  musicAudio.currentTime = (currPoint / currWidth) * musicAudio.duration;
+  progressWidth.value = Math.floor(
+    (musicAudio.currentTime / currentMusic.time) * 100
+  );
+};
+
+let isShowVolume = ref(false);
+// 鼠标移入/移出显示/隐藏音量控制
+const handleEnter = () => {
+  isShowVolume.value = true;
+};
+const handleLeave = () => {
+  isShowVolume.value = false;
+};
+
+let audioVolume = ref("50%");
+musicAudio.volume = Number(audioVolume.value.slice(0, -1) / 100);
+// 控制音量加减---注意会出现精度问题
+const handleVolume = (type) => {
+  let volume = Number(musicAudio.volume.toFixed(2));
+  if (volume < 0 || volume > 1) return;
+  let volumeNum = Number(audioVolume.value.slice(0, -1));
+  if (type === "sub") {
+    musicAudio.volume = Number(((volume * 100 - 1) / 100).toFixed(2));
+    audioVolume.value = volumeNum - 1 + "%";
+  } else if (type === "add") {
+    musicAudio.volume = Number(((volume * 100 + 1) / 100).toFixed(2));
+    audioVolume.value = volumeNum + 1 + "%";
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -127,10 +183,22 @@ const toggleHandle = async () => {
   height: 5px;
   width: 100%;
   background-color: #e3e3e3;
+  cursor: pointer;
   .progress {
     // width: 20%;
     height: 100%;
     background-color: #27c448;
+    position: relative;
+    &:hover::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #f00;
+      position: absolute;
+      top: -50%;
+      right: 0;
+    }
   }
 }
 .footer-container {
@@ -183,6 +251,26 @@ const toggleHandle = async () => {
       height: 20px;
       font-size: 16px;
       cursor: pointer;
+      &.icon-yinliang {
+        position: relative;
+        .volume {
+          position: absolute;
+          top: -40px;
+          left: -30px;
+          display: flex;
+          padding: 10px 5px;
+          background-color: #fff;
+          box-shadow: 0 0 5px #ccc;
+          justify-content: space-evenly;
+          align-items: center;
+          width: 70px;
+          height: 40px;
+          > .iconfont {
+            width: 18px;
+            height: 19px;
+          }
+        }
+      }
       // border: 1px solid #000;
     }
   }

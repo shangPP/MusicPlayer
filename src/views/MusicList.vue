@@ -33,9 +33,14 @@
               class="music-btns"
               v-show="isShowMusicBtns && item.id === currentId"
             >
-              <div class="iconfont icon-play" @click="handlePlay(item)"></div>
+              <div
+                class="iconfont icon-play"
+                title="播放"
+                @click="handlePlay(item)"
+              ></div>
               <div
                 class="iconfont icon-delete"
+                title="删除"
                 @click="handleDelete(item)"
               ></div>
             </div>
@@ -50,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, watchEffect } from "vue";
+import { ref, reactive, onMounted, toRaw } from "vue";
 import { convertDuration } from "@/utils/helper.js";
 import bus from "@/utils/eventBus.js";
 
@@ -82,8 +87,8 @@ const handlePlay = (item) => {
 };
 
 // 音乐删除
-const handleDelete = (item) => {
-  // musicAudio.pause();
+const handleDelete = async (item) => {
+  musicFilesPath.value = await myApi.delMusic(toRaw(item).id);
 };
 
 // 上一曲

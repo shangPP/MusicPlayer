@@ -11,3 +11,7 @@ ipcMain.handle("on-prevMusic-event", (e, arg) => {
 ipcMain.handle("on-nextMusic-event", (e, arg) => {
   return myStore.getNextTrack(arg)
 })
+// 删除
+ipcMain.handle("on-delMusic-event", (e, musicId) => {
+  return myStore.deleteTrack(musicId).getTracks()
+})

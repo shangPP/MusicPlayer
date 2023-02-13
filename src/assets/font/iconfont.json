@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18175779",
+      "name": "减号,展开,删除",
+      "font_class": "checkbox-minus-full",
+      "unicode": "ea6d",
+      "unicode_decimal": 60013
+    },
+    {
+      "icon_id": "18175782",
+      "name": "加号,收起,添加",
+      "font_class": "checkbox-plus-full",
+      "unicode": "ea6e",
+      "unicode_decimal": 60014
+    },
+    {
       "icon_id": "18171139",
       "name": "垃圾桶,删除",
       "font_class": "delete",
