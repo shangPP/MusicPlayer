@@ -1,3 +1,4 @@
+<!-- 窗口控制组件 -->
 <template>
   <div class="window-btns">
     <div

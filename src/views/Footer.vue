@@ -60,6 +60,7 @@
 
 <script setup>
 import { ref, reactive, toRaw } from "vue";
+import lyricsParse from "lyrics-parse";
 import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
 
@@ -74,10 +75,12 @@ let musicAudio = reactive(new Audio());
 
 // 获取当前播放音乐信息
 let currentMusic = reactive({});
-bus.on("musicInfo", (data) => {
+bus.on("musicInfo", async (data) => {
   // console.log(data);
   currentMusic = data;
   musicAudio.src = data.path;
+  const lyrics = await lyricsParse(currentMusic.name, currentMusic.singer);
+  console.log(lyrics);
   musicAudio.play();
   isPlay.value = true;
 });
