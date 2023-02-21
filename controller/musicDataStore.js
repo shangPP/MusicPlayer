@@ -5,7 +5,7 @@
 const Store = require("electron-store");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
-const load = require('audio-loader'); //会阻止控制台打开
+// const load = require('audio-loader'); //会阻止控制台打开
 const { app } = require("electron");
 const { search, getLyrics } = require("../src/api/index.js")
 // import Store from 'electron-store'

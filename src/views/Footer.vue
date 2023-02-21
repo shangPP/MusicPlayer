@@ -8,7 +8,7 @@
       <div class="music-left">
         <slot name="left">
           <div class="music-img" @click="gotoDetail()">
-            <img src="../assets/music.png" alt="" />
+            <img :src="currentMusic.music_img" alt="" />
           </div>
           <div class="music-info">
             <span v-if="currentMusic.name"
@@ -60,30 +60,30 @@
 
 <script setup>
 import { ref, reactive, toRaw } from "vue";
-import lyricsParse from "lyrics-parse";
+import { useRouter } from "vue-router";
 import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
+import { useMusicStore } from "@/stores/index.js";
+const store = useMusicStore();
 
-import { useRouter } from "vue-router";
+let musicAudio = reactive(store.getMusicAudio);
+
+// 获取当前播放音乐信息
+let currentMusic = reactive(toRaw(store.getCurrentMusic));
+bus.on("musicInfo", async (data) => {
+  // console.log(data);
+  store.setCurrMusic(data);
+  store.setTogglePlay(true);
+  store.toggleMusic();
+});
+
 // 路由跳转
 const router = useRouter();
 const gotoDetail = () => {
-  router.replace("/detail");
+  router.replace({
+    path: "/detail",
+  });
 };
-
-let musicAudio = reactive(new Audio());
-
-// 获取当前播放音乐信息
-let currentMusic = reactive({});
-bus.on("musicInfo", async (data) => {
-  // console.log(data);
-  currentMusic = data;
-  musicAudio.src = data.path;
-  const lyrics = await lyricsParse(currentMusic.name, currentMusic.singer);
-  console.log(lyrics);
-  musicAudio.play();
-  isPlay.value = true;
-});
 
 // 获取当前播放进度
 // 进度条宽度
@@ -91,6 +91,8 @@ let progressWidth = ref(0);
 // 当前播放时间
 let currentTime = ref(0);
 musicAudio.ontimeupdate = (event) => {
+  // console.log(musicAudio.currentTime);
+  bus.emit("musicTime", musicAudio.currentTime);
   currentTime.value = musicAudio.currentTime;
   progressWidth.value = Math.floor(
     (musicAudio.currentTime / currentMusic.time) * 100
@@ -103,34 +105,24 @@ musicAudio.ontimeupdate = (event) => {
 
 // 播放上一首歌曲
 const prevHandle = async () => {
-  currentMusic = await myApi.getPrevMusic(toRaw(currentMusic));
-  musicAudio.src = currentMusic.path;
-  musicAudio.play();
-
+  isPlay.value = store.setTogglePlay(true);
+  currentMusic = await store.getPrevMusic();
   bus.emit("preMusic", currentMusic);
 };
 // 播放下一首歌曲
 const nextHandle = async () => {
-  currentMusic = await myApi.getNextMusic(toRaw(currentMusic));
-  musicAudio.src = currentMusic.path;
-  musicAudio.play();
+  isPlay.value = store.setTogglePlay(true);
+  currentMusic = await store.getNextMusic();
 
   bus.emit("nextMusic", currentMusic);
 };
 
-let isPlay = ref(false);
+let isPlay = ref(store.getPlayStatus);
 // 播放/暂停切换
 const toggleHandle = async () => {
-  isPlay.value = !isPlay.value;
-  if (isPlay.value) {
-    if (!musicAudio.src) {
-      currentMusic = await myApi.getNextMusic(toRaw(currentMusic));
-      musicAudio.src = currentMusic.path;
-    }
-    musicAudio.play();
-  } else {
-    musicAudio.pause();
-  }
+  isPlay.value = store.setTogglePlay(!store.getPlayStatus);
+  currentMusic = store.getCurrentMusic;
+  store.toggleMusic();
 };
 
 // 点击进度条进行跳转

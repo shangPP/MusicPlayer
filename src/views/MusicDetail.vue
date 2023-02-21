@@ -4,21 +4,38 @@
     <div class="music-detail">
       <div class="left">
         <div class="music-img">
-          <img src="../assets/music.png" alt="" />
+          <img :src="currentMusic.music_img" alt="" />
         </div>
       </div>
       <div class="right">
         <div class="music-info">
-          <h3>一日都市</h3>
+          <h3>{{ currentMusic.name }}</h3>
           <div class="music-singer">
             <span>歌手：</span>
-            <span>hanser</span>
+            <span>{{ currentMusic.singer }}</span>
           </div>
           <div class="music-from">
             <span>专辑：</span>
-            <span>专辑名</span>
+            <span>{{ currentMusic.music_from }}</span>
           </div>
-          <div class="music-lyric">歌词 歌词 歌词 歌词</div>
+          <div class="music-lyrics">
+            <ul
+              class="lyrics-container"
+              :style="{ top: '-' + lyricsTop + 'px' }"
+            >
+              <li
+                v-for="(item, i) of lyrics"
+                :key="i"
+                :style="{
+                  color: currenIndex == i ? 'red' : 'block',
+                  fontSize: currenIndex == i ? '20px' : '16px',
+                }"
+              >
+                <span v-show="true">{{ splitEveryLineLyric(item)[0] }}</span>
+                <span>{{ splitEveryLineLyric(item)[1] }}</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -33,15 +50,55 @@
 </template>
 
 <script setup>
+import { reactive, toRaw, computed, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import WindowHandles from "../components/WindowHandles.vue";
 import Footer from "./Footer.vue";
+import bus from "@/utils/eventBus.js";
+import { useMusicStore } from "@/stores/index.js";
+import { splitEveryLineLyric, convertDuration } from "@/utils/helper.js";
+const store = useMusicStore();
 
 const router = useRouter();
 
 const gotoHome = () => {
-  router.replace("/");
+  router.replace("/home");
 };
+
+let musicAudio = reactive(store.getMusicAudio);
+// 获取当前播放音乐信息
+let currentMusic = reactive(toRaw(store.getCurrentMusic));
+// console.log(currentMusic);
+console.log(musicAudio);
+
+// 当前播放时间
+// let currentTime = ref(0);
+let currenIndex = ref(0);
+let lyrics = currentMusic.lyrics.split("\r\n");
+let lyricsTop = ref(0);
+bus.on("musicTime", (time) => {
+  // currentTime.value = time;
+  for (let i = 0; i < lyrics.length; i++) {
+    let lyrTime = splitEveryLineLyric(lyrics[i])[0];
+    let musicTime = convertDuration(time);
+    if (lyrTime.includes(musicTime)) {
+      lyricsTop.value = 40 * i;
+      currenIndex.value = i;
+    }
+  }
+});
+
+// console.log(lyrics);
+// musicAudio.ontimeupdate = (event) => {
+//   console.log("111");
+//   console.log(musicAudio.currentTime);
+//   // todo 设置歌词滚动，监听歌曲进度
+//   // for (let i = 0; i < lyrics.length; i++) {
+//   //   if (lyrics[i].includes(musicAudio.currentTime)) {
+//   //     lyricsTop.value = i * 40;
+//   //   }
+//   // }
+// };
 </script>
 
 <style lang="less" scoped>
@@ -92,11 +149,27 @@ const gotoHome = () => {
           height: 40px;
           line-height: 40px;
         }
-        .music-lyric {
+        .music-lyrics {
           flex: 1;
-          width: 80%;
+          width: 90%;
           margin-top: 20px;
           border: 1px solid #000;
+          position: relative;
+          overflow: hidden;
+          .lyrics-container {
+            position: absolute;
+            left: 0;
+            top: -200px;
+            width: 100%;
+            height: 500px;
+            border: 1px solid #f00;
+            list-style: none;
+            > li {
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+            }
+          }
         }
       }
     }
