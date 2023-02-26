@@ -29,10 +29,17 @@ export const useMusicStore = defineStore("music", {
       // 存入缓存
       localStorage.setItem("currentMusic", JSON.stringify(this.currentMusic));
     },
+    cleanCurrentMusic() {
+      let allMusic = myApi.getTracks()
+      if (allMusic.length == 0) {
+        this.currentMusic = {};
+        this.saveCurrentMusic();
+      }
+    },
     // 设置当前播放音乐
     setCurrMusic(currMusic) {
       this.currMusic = currMusic;
-      this.saveCurrentMusic;
+      this.saveCurrentMusic();
     },
     // 设置当前是否播放
     setTogglePlay(isPlay) {
@@ -46,7 +53,7 @@ export const useMusicStore = defineStore("music", {
       // this.musicAudio.play()
       this.isPlay = true;
       this.toggleMusic();
-      this.saveCurrentMusic;
+      this.saveCurrentMusic();
       return this.getCurrentMusic;
     },
     // 获取下一首音乐
@@ -56,7 +63,7 @@ export const useMusicStore = defineStore("music", {
       // this.musicAudio.play()
       this.isPlay = true;
       this.toggleMusic();
-      this.saveCurrentMusic;
+      this.saveCurrentMusic();
       return this.getCurrentMusic;
     },
     // 切换播放/暂停状态

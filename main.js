@@ -6,7 +6,8 @@ const WinState = require("electron-win-state").default;
 
 // 不设置菜单
 Menu.setApplicationMenu(null);
-
+// 屏蔽安全警告
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 require("./controller/addMusic");
 require("./controller/controlMusic");

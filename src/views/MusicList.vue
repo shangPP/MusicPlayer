@@ -83,6 +83,7 @@ const handleLeave = (item) => {
 // 音乐播放
 const handlePlay = (item) => {
   currentMusic = item;
+  currentId.value = item.id;
   bus.emit("musicInfo", item);
 };
 

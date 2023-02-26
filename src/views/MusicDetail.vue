@@ -9,32 +9,34 @@
       </div>
       <div class="right">
         <div class="music-info">
-          <h3>{{ currentMusic.name }}</h3>
+          <h3>{{ music_name }}</h3>
           <div class="music-singer">
             <span>歌手：</span>
-            <span>{{ currentMusic.singer }}</span>
+            <span>{{ music_singer }}</span>
           </div>
           <div class="music-from">
             <span>专辑：</span>
-            <span>{{ currentMusic.music_from }}</span>
+            <span>{{ music_from }}</span>
           </div>
           <div class="music-lyrics">
             <ul
               class="lyrics-container"
               :style="{ top: '-' + lyricsTop + 'px' }"
+              v-if="lyrics.length > 1"
             >
               <li
                 v-for="(item, i) of lyrics"
                 :key="i"
                 :style="{
-                  color: currenIndex == i ? 'red' : 'block',
-                  fontSize: currenIndex == i ? '20px' : '16px',
+                  color: currenIndex == i ? '#f00' : '#000',
+                  fontSize: currenIndex == i ? '24px' : '16px',
                 }"
               >
-                <span v-show="true">{{ splitEveryLineLyric(item)[0] }}</span>
+                <span v-show="false">{{ splitEveryLineLyric(item)[0] }}</span>
                 <span>{{ splitEveryLineLyric(item)[1] }}</span>
               </li>
             </ul>
+            <div class="lyrics-no" v-else>暂无歌词</div>
           </div>
         </div>
       </div>
@@ -50,7 +52,7 @@
 </template>
 
 <script setup>
-import { reactive, toRaw, computed, watch, ref } from "vue";
+import { reactive, toRaw, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import WindowHandles from "../components/WindowHandles.vue";
 import Footer from "./Footer.vue";
@@ -60,21 +62,25 @@ import { splitEveryLineLyric, convertDuration } from "@/utils/helper.js";
 const store = useMusicStore();
 
 const router = useRouter();
-
+// 路由
 const gotoHome = () => {
   router.replace("/home");
 };
 
-let musicAudio = reactive(store.getMusicAudio);
 // 获取当前播放音乐信息
 let currentMusic = reactive(toRaw(store.getCurrentMusic));
 // console.log(currentMusic);
-console.log(musicAudio);
 
-// 当前播放时间
-// let currentTime = ref(0);
+// 当前播放歌词索引
 let currenIndex = ref(0);
-let lyrics = currentMusic.lyrics.split("\r\n");
+// 歌曲名称
+let music_name = ref(currentMusic.name);
+// 歌曲歌手
+let music_singer = ref(currentMusic.singer);
+// 歌曲专辑
+let music_from = ref(currentMusic.music_from);
+// 歌词数组
+let lyrics = reactive(currentMusic.lyrics.split("\r\n"));
 let lyricsTop = ref(0);
 bus.on("musicTime", (time) => {
   // currentTime.value = time;
@@ -82,23 +88,31 @@ bus.on("musicTime", (time) => {
     let lyrTime = splitEveryLineLyric(lyrics[i])[0];
     let musicTime = convertDuration(time);
     if (lyrTime.includes(musicTime)) {
-      lyricsTop.value = 40 * i;
+      lyricsTop.value = 40 * (i - 4);
       currenIndex.value = i;
     }
   }
 });
 
-// console.log(lyrics);
-// musicAudio.ontimeupdate = (event) => {
-//   console.log("111");
-//   console.log(musicAudio.currentTime);
-//   // todo 设置歌词滚动，监听歌曲进度
-//   // for (let i = 0; i < lyrics.length; i++) {
-//   //   if (lyrics[i].includes(musicAudio.currentTime)) {
-//   //     lyricsTop.value = i * 40;
-//   //   }
-//   // }
-// };
+watch(
+  () => store.getCurrentMusic,
+  (val) => {
+    let time = val.time;
+    lyrics = val.lyrics.split("\r\n");
+    music_name.value = val.name;
+    music_singer.value = val.singer;
+    music_from.value = val.music_from;
+    for (let i = 0; i < lyrics.length; i++) {
+      let lyrTime = splitEveryLineLyric(lyrics[i])[0];
+      let musicTime = convertDuration(time);
+      if (lyrTime.includes(musicTime)) {
+        lyricsTop.value = 40 * (i - 4);
+        currenIndex.value = i;
+      }
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="less" scoped>
@@ -169,6 +183,14 @@ bus.on("musicTime", (time) => {
               line-height: 40px;
               text-align: center;
             }
+          }
+          .lyrics-no {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
           }
         }
       }

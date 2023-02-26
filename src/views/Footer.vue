@@ -25,12 +25,15 @@
         </slot>
       </div>
       <div class="music-center">
+        <!-- 上一首 -->
         <div class="iconfont icon-prev" @click="prevHandle"></div>
+        <!-- 播放、暂停 -->
         <div
           class="iconfont"
           :class="isPlay ? 'icon-pause-full' : 'icon-play-full'"
           @click="toggleHandle"
         ></div>
+        <!-- 下一首 -->
         <div class="iconfont icon-next" @click="nextHandle"></div>
       </div>
       <div class="music-right">
@@ -72,8 +75,9 @@ let musicAudio = reactive(store.getMusicAudio);
 let currentMusic = reactive(toRaw(store.getCurrentMusic));
 bus.on("musicInfo", async (data) => {
   // console.log(data);
-  store.setCurrMusic(data);
-  store.setTogglePlay(true);
+  currentMusic = data;
+  store.setCurrMusic(toRaw(data));
+  isPlay.value = store.setTogglePlay(true);
   store.toggleMusic();
 });
 

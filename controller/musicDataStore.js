@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 // const load = require('audio-loader'); //会阻止控制台打开
 const { app } = require("electron");
-const { search, getLyrics } = require("../src/api/index.js")
+const { reqSearch, reqGetLyrics } = require("../src/api/index.js");
 // import Store from 'electron-store'
 // import { v4: uuidv4 } from 'uuid'
 // import path from 'path'
@@ -41,13 +41,21 @@ class DataStore extends Store {
       let fileNameArr = fileName.slice(0, index).split(" - ");
       // 歌名
       let name = fileNameArr[0];
-      let searchLists = await search(name);
+      // 歌手
+      let singer = fileNameArr[1];
+      // 后缀类型
+      let type = fileName.slice(index + 1);
+      let searchLists = await reqSearch(name + "-" + singer);
       // console.log(searchLists);
       // searchLists = searchLists.slice(searchLists.indexOf("{"), -1)
+      // 歌词，专辑名称，专辑图片，时长
       let lyrics, music_from, music_img, timelength;
       if (searchLists.data.lists.length > 0) {
-        const { FileHash, AlbumID } = searchLists.data.lists[0];
-        let res = await getLyrics(FileHash, AlbumID);
+        // console.log(searchLists.data.lists[0]);
+        // 文件hash，id，歌手名
+        const { FileHash, AlbumID, SingerName } = searchLists.data.lists[0];
+        // 获取歌词
+        let res = await reqGetLyrics(FileHash, AlbumID);
         // console.log(typeof res);
         let data = JSON.parse(res.slice(res.indexOf("{"), -2));
         // console.log("++++++", data)
@@ -56,28 +64,36 @@ class DataStore extends Store {
         music_img = data.data.img;
         timelength = data.data.timelength;
         // console.log(lyrics, music_from, music_img, timelength);
-        // 歌手
-        let singer = fileNameArr[1];
-        // 后缀类型
-        let type = fileName.slice(index + 1);
-        return {
-          id: uuidv4(),
-          path: track,
-          name,
-          singer,
-          lyrics,
-          music_from,
-          music_img,
-          timelength,
-          time: duration,
-          fileName: path.basename(track),
-          type,
-        };
+        if (singer === SingerName) {
+          return {
+            id: uuidv4(),
+            path: track,
+            name,
+            singer,
+            lyrics,
+            music_from,
+            music_img,
+            timelength,
+            time: duration,
+            fileName: path.basename(track),
+            type,
+          };
+        } else {
+          return {
+            id: uuidv4(),
+            path: track,
+            name,
+            singer,
+            lyrics: "",
+            music_from: "",
+            music_img: "",
+            timelength: "",
+            time: duration,
+            fileName: path.basename(track),
+            type,
+          };
+        }
       } else {
-        // 歌手
-        let singer = fileNameArr[1];
-        // 后缀类型
-        let type = fileName.slice(index + 1);
         return {
           id: uuidv4(),
           path: track,

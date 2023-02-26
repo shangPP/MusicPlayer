@@ -18,6 +18,7 @@
     "electron": "^22.2.0",
     "electron-store": "^8.1.0",
     "electron-win-state": "^1.1.22",
+    "element-plus": "^2.2.32",
     "mitt": "^3.0.0",
     "normalize.css": "^8.0.1",
     "pinia": "^2.0.30",

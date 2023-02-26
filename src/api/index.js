@@ -8,17 +8,17 @@ const { ajax, jsonp } = require("./ajax.js");
 // const BASE_URL = "/api";
 
 // 根据关键词搜索歌曲
-const search = (keyword) =>
+const reqSearch = (keyword) =>
   ajax(
     `https://songsearch.kugou.com/song_search_v2?keyword=${keyword}&page=1&pagesize=30`
   );
 // 获取歌词
-const getLyrics = (hash, album_id) =>
+const reqGetLyrics = (hash, album_id) =>
   ajax(
     `https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery19108001866002482712_1600062977462&hash=${hash}&album_id=${album_id}&dfid=0R8DjY2N76ry107YTH4GPprM&mid=c873a389849646fbfa13f2a37e33ed7a`
   );
 
 module.exports = {
-  search,
-  getLyrics,
+  reqSearch,
+  reqGetLyrics,
 };
