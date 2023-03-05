@@ -38,7 +38,8 @@ export const useMusicStore = defineStore("music", {
     },
     // 设置当前播放音乐
     setCurrMusic(currMusic) {
-      this.currMusic = currMusic;
+      this.currentMusic = currMusic;
+      this.musicAudio.src = currMusic.path;
       this.saveCurrentMusic();
     },
     // 设置当前是否播放
@@ -50,7 +51,6 @@ export const useMusicStore = defineStore("music", {
     async getPrevMusic() {
       this.currentMusic = await myApi.getPrevMusic(toRaw(this.getCurrentMusic));
       this.musicAudio.src = this.currentMusic.path;
-      // this.musicAudio.play()
       this.isPlay = true;
       this.toggleMusic();
       this.saveCurrentMusic();
@@ -60,7 +60,6 @@ export const useMusicStore = defineStore("music", {
     async getNextMusic() {
       this.currentMusic = await myApi.getNextMusic(toRaw(this.getCurrentMusic));
       this.musicAudio.src = this.currentMusic.path;
-      // this.musicAudio.play()
       this.isPlay = true;
       this.toggleMusic();
       this.saveCurrentMusic();

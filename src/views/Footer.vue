@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRaw } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
@@ -72,14 +72,15 @@ const store = useMusicStore();
 let musicAudio = reactive(store.getMusicAudio);
 
 // 获取当前播放音乐信息
-let currentMusic = reactive(toRaw(store.getCurrentMusic));
-bus.on("musicInfo", async (data) => {
-  // console.log(data);
-  currentMusic = data;
-  store.setCurrMusic(toRaw(data));
-  isPlay.value = store.setTogglePlay(true);
-  store.toggleMusic();
-});
+let currentMusic = reactive(store.getCurrentMusic);
+
+watch(
+  () => store.getCurrentMusic,
+  (val) => {
+    currentMusic = val;
+  },
+  { deep: true }
+);
 
 // 路由跳转
 const router = useRouter();
@@ -111,14 +112,11 @@ musicAudio.ontimeupdate = (event) => {
 const prevHandle = async () => {
   isPlay.value = store.setTogglePlay(true);
   currentMusic = await store.getPrevMusic();
-  bus.emit("preMusic", currentMusic);
 };
 // 播放下一首歌曲
 const nextHandle = async () => {
   isPlay.value = store.setTogglePlay(true);
   currentMusic = await store.getNextMusic();
-
-  bus.emit("nextMusic", currentMusic);
 };
 
 let isPlay = ref(store.getPlayStatus);

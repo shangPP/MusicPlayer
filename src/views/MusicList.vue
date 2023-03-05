@@ -55,9 +55,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, toRaw } from "vue";
+import { ref, reactive, onMounted, toRaw, watch } from "vue";
 import { convertDuration } from "@/utils/helper.js";
-import bus from "@/utils/eventBus.js";
+import { useMusicStore } from "@/stores/index.js";
+const store = useMusicStore();
 
 let musicFilesPath = ref([]);
 onMounted(async () => {
@@ -69,7 +70,7 @@ const addMusicFile = async () => {
 };
 
 let currentId = ref("");
-let currentMusic = reactive({});
+let currentMusic = reactive(store.getCurrentMusic);
 let isShowMusicBtns = ref(true);
 // 鼠标移入
 const handleEnter = (item) => {
@@ -81,10 +82,12 @@ const handleLeave = (item) => {
 };
 
 // 音乐播放
-const handlePlay = (item) => {
+const handlePlay = async (item) => {
   currentMusic = item;
   currentId.value = item.id;
-  bus.emit("musicInfo", item);
+  await store.setCurrMusic(item);
+  store.setTogglePlay(true);
+  store.toggleMusic();
 };
 
 // 音乐删除
@@ -92,16 +95,14 @@ const handleDelete = async (item) => {
   musicFilesPath.value = await myApi.delMusic(toRaw(item).id);
 };
 
-// 上一曲
-bus.on("preMusic", (data) => {
-  currentMusic = data;
-  currentId.value = data.id;
-});
-// 下一曲
-bus.on("nextMusic", (data) => {
-  currentMusic = data;
-  currentId.value = data.id;
-});
+watch(
+  () => store.getCurrentMusic,
+  (val) => {
+    currentMusic = val;
+    currentId.value = val.id;
+  },
+  { deep: true }
+);
 </script>
 
 <style lang="less" scoped>

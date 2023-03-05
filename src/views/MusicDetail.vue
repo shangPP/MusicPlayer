@@ -22,7 +22,7 @@
             <ul
               class="lyrics-container"
               :style="{ top: '-' + lyricsTop + 'px' }"
-              v-if="lyrics.length > 1"
+              v-if="lyrics.length > 2"
             >
               <li
                 v-for="(item, i) of lyrics"
@@ -68,7 +68,7 @@ const gotoHome = () => {
 };
 
 // 获取当前播放音乐信息
-let currentMusic = reactive(toRaw(store.getCurrentMusic));
+let currentMusic = reactive(store.getCurrentMusic);
 // console.log(currentMusic);
 
 // 当前播放歌词索引
@@ -97,8 +97,10 @@ bus.on("musicTime", (time) => {
 watch(
   () => store.getCurrentMusic,
   (val) => {
+    // console.log(val);
+    currentMusic = val;
     let time = val.time;
-    lyrics = val.lyrics.split("\r\n");
+    lyrics = (val.lyrics && val.lyrics.split("\r\n")) || "[]";
     music_name.value = val.name;
     music_singer.value = val.singer;
     music_from.value = val.music_from;
@@ -110,8 +112,8 @@ watch(
         currenIndex.value = i;
       }
     }
-  },
-  { immediate: true }
+  }
+  // { immediate: true }
 );
 </script>
 
@@ -167,7 +169,7 @@ watch(
           flex: 1;
           width: 90%;
           margin-top: 20px;
-          border: 1px solid #000;
+          // border: 1px solid #000;
           position: relative;
           overflow: hidden;
           .lyrics-container {
@@ -176,7 +178,7 @@ watch(
             top: -200px;
             width: 100%;
             height: 500px;
-            border: 1px solid #f00;
+            // border: 1px solid #f00;
             list-style: none;
             > li {
               height: 40px;
