@@ -10,9 +10,6 @@
 
 ## 开发中
 
-- 初始化不点播放时，默认显示空的歌词信息
-- 首页时点击歌曲列表，不会替换播放的歌曲
-
 ## 开发任务列表
 
 - [x] 添加音乐
@@ -64,4 +61,3 @@ https://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=106EC000715C5C62AAE3
 https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery19108355710141456396_1676515903626&dfid=0R8DjY2N76ry107YTH4GPprM&appid=1014&mid=c873a389849646fbfa13f2a37e33ed7a&platid=4&encode_album_audio_id=nyfx390&*=1676515903627
 2 需要 hash 和 album_id ---采用
 https://wwwapi.kugou.com/yy/index.php?r=play/getdata&callback=jQuery19108001866002482712_1600062977462&hash=795fa204c637889bb3bfcafc044d6154&album_id=0&dfid=2lP8Vp1RHLHj0wmucn0XlXFL&mid=c873a389849646fbfa13f2a37e33ed7a
-
