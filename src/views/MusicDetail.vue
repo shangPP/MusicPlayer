@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { reactive, toRaw, watch, ref } from "vue";
+import { reactive, watch, ref } from "vue";
 import { useRouter } from "vue-router";
 import WindowHandles from "../components/WindowHandles.vue";
 import Footer from "./Footer.vue";

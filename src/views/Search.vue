@@ -6,8 +6,14 @@
 
     <div class="container">
       <div class="searchBar">
-        <div class="iconfont icon-SanMiAppoutlinei"></div>
-        <input type="text" />
+        <el-input
+          v-model="searchValue"
+          class="w-50 m-2"
+          placeholder="搜索"
+          :prefix-icon="Search"
+          clearable
+          @change="searchValueChange"
+        />
       </div>
     </div>
     <WindowHandles />
@@ -17,6 +23,14 @@
 <script setup>
 import { ref } from "vue";
 import WindowHandles from "../components/WindowHandles.vue";
+import { Search } from "@element-plus/icons-vue";
+
+// 搜索关键词
+const searchValue = ref("");
+const searchValueChange = (value) => {
+  console.log(value);
+  console.log(searchValue.value);
+};
 </script>
 
 <style lang="less" scoped>
@@ -53,23 +67,8 @@ import WindowHandles from "../components/WindowHandles.vue";
     display: flex;
     align-items: center;
     -webkit-app-region: no-drag;
-    .icon-SanMiAppoutlinei {
-      width: 30px;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      position: absolute;
-      top: 2px;
-      font-size: 26px;
-    }
-    input {
-      height: 100%;
-      width: 100%;
-      border-radius: 20px;
-      outline: none;
-      border: 1px solid #000;
-      padding-left: 40px;
-      // background-color: pink;
+    :deep(.el-input__wrapper.is-focus) {
+      box-shadow: 0 0 0 1px #999999 inset;
     }
   }
 }
