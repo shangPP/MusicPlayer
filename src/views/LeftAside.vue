@@ -27,9 +27,9 @@ import { ref } from "vue";
   height: 100%;
   background-color: #fff;
   padding-top: 0px;
-  // border-right: 2px solid #eee;
-  box-shadow: 2px 0px 2px #eee;
-  z-index: 9;
+  border-right: 2px solid #eee;
+  // box-shadow: 2px 0px 2px #eee;
+  // z-index: 1;
 
   -webkit-app-region: no-drag;
   .list {

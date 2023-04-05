@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <Search></Search>
-    <div class="main">
+    <div class="mainBody">
       <LeftAside></LeftAside>
       <MusicList></MusicList>
     </div>
@@ -17,11 +17,11 @@ import Footer from "./Footer.vue";
 import { ref } from "vue";
 </script>
 
-<style lang="less">
-div {
+<style lang="less" scoped>
+.app {
   height: 100%;
 }
-.main {
+.mainBody {
   display: flex;
   height: calc(100% - 60px - 80px);
 }

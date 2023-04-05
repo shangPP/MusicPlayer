@@ -108,8 +108,6 @@ class DataStore extends Store {
           type,
         };
       }
-
-
     });
     // 去重
     return await Promise.all(tracksWithProps).then(async (arr) => {

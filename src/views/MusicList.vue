@@ -2,17 +2,28 @@
   <div class="main">
     <div class="title">默认列表</div>
     <ul class="btns">
-      <li>
+      <li @click="handleMuch()" :class="currbtn == '批量操作' ? 'active' : ''">
         <div class="iconfont icon-piliangcaozuo"></div>
         <span>批量操作</span>
       </li>
-      <li @click="addMusicFile()">
+      <li @click="addMusicFile()" v-show="!isShowCheckBox">
         <div class="iconfont icon-SanMiAppoutlinei1"></div>
         <span>添加</span>
+      </li>
+      <li @click="delMuchMusic()" v-show="isShowCheckBox">
+        <div class="iconfont icon-SanMiAppoutlinei1"></div>
+        <span>删除</span>
       </li>
     </ul>
     <div class="music-list">
       <div class="list-head">
+        <div class="music-choose" v-show="isShowCheckBox">
+          <el-checkbox
+            v-model="isCheckBoxAll"
+            @change="toggleCheckBoxAll"
+            label=""
+          />
+        </div>
         <div class="music-name">歌曲名</div>
         <div class="music-singer">歌手</div>
         <div class="music-from">专辑</div>
@@ -22,11 +33,18 @@
         <div
           class="list-body-item"
           v-for="(item, i) of musicFilesPath"
-          :key="i"
+          :key="item.id"
           @mouseenter="handleEnter(item)"
           @mouseleave="handleLeave(item)"
           :class="{ activeMusic: item.id === currentMusic.id }"
         >
+          <div class="music-choose" v-show="isShowCheckBox">
+            <el-checkbox
+              v-model="item.isCheckBox"
+              @change="toggleChoose(item)"
+              label=""
+            />
+          </div>
           <div class="music-name">
             <span :title="item.name">{{ item.name }}</span>
             <div
@@ -55,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, toRaw, watch } from "vue";
+import { ref, reactive, onMounted, toRaw, watch, computed } from "vue";
 import { convertDuration } from "@/utils/helper.js";
 import { useMusicStore } from "@/stores/index.js";
 const store = useMusicStore();
@@ -89,12 +107,64 @@ const handlePlay = async (item) => {
   store.setTogglePlay(true);
   store.toggleMusic();
 };
-
 // 音乐删除
 const handleDelete = async (item) => {
   musicFilesPath.value = await myApi.delMusic(toRaw(item).id);
 };
 
+// 是否展示checkbox
+const isShowCheckBox = ref(false);
+// 是否勾选全部
+const isCheckBoxAll = ref(false);
+// 当前按钮
+const currbtn = ref("");
+// 存放要删除的数据
+const delMusicArr = ref([]);
+// 批量操作点击
+const handleMuch = () => {
+  isShowCheckBox.value = !isShowCheckBox.value;
+  currbtn.value = currbtn.value == "" ? "批量操作" : "";
+  delMusicArr.value = [];
+  musicFilesPath.value.forEach((item) => {
+    item.isCheckBox = false;
+  });
+};
+// 批量操作--删除
+const delMuchMusic = () => {
+  delMusicArr.value.forEach((item) => {
+    handleDelete(item);
+  });
+};
+// 点击切换checkbox状态
+const toggleChoose = (val) => {
+  if (val.isCheckBox) {
+    delMusicArr.value.push(val);
+  } else {
+    const index = delMusicArr.value.indexOf(val);
+    delMusicArr.value.splice(index, 1);
+  }
+};
+// 点击切换表头全部checkbox状态
+const toggleCheckBoxAll = (val) => {
+  musicFilesPath.value.forEach((item) => {
+    item.isCheckBox = val;
+  });
+  if (val) {
+    delMusicArr.value = [...musicFilesPath.value];
+  } else {
+    delMusicArr.value = [];
+  }
+};
+
+// 计算是否全部勾选
+watch(
+  () => delMusicArr.value.length,
+  (val) => {
+    isCheckBoxAll.value = val == musicFilesPath.value.length;
+  }
+);
+
+// 监听当前播放音乐
 watch(
   () => store.getCurrentMusic,
   (val) => {
@@ -150,7 +220,8 @@ watch(
     > span {
       font-size: 12px !important;
     }
-    &:hover {
+    &:hover,
+    &.active {
       background-color: #27c448;
     }
   }
@@ -162,6 +233,9 @@ watch(
 
   .music-item() {
     display: flex;
+    .music-choose {
+      width: 40px;
+    }
     .music-name {
       flex: 3;
       padding-left: 5px;

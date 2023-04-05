@@ -11,9 +11,14 @@ body {
 }
 
 #app {
+    height: 100%;
     -webkit-app-region: drag;
     /*支持拖放*/
     border-radius: 15px;
     overflow: hidden;
     background-color: #fff;
+}
+
+.el-popover {
+    -webkit-app-region: no-drag;
 }

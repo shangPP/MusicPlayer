@@ -1,9 +1,12 @@
 <template>
   <div class="footer">
     <!-- 进度条 -->
-    <div class="progress-container" @click="progressHandle">
-      <div class="progress" :style="{ width: progressWidth + '%' }"></div>
-    </div>
+    <el-slider
+      v-model="progressWidth"
+      :show-tooltip="false"
+      @input="progressHandle"
+      style="height: 5px"
+    />
     <div class="footer-container">
       <div class="music-left">
         <slot name="left">
@@ -37,24 +40,16 @@
         <div class="iconfont icon-next" @click="nextHandle"></div>
       </div>
       <div class="music-right">
-        <div
-          class="iconfont icon-yinliang"
-          title="调节音量"
-          @mouseenter="handleEnter"
-          @mouseleave="handleLeave"
-        >
-          <div class="volume" v-show="isShowVolume">
+        <el-popover :visible="isShowVolume" placement="top" :width="150">
+          <el-slider v-model="audioVolume" @input="handleVolume" />
+          <template #reference>
             <div
-              class="iconfont icon-checkbox-minus-full"
-              @click="handleVolume('sub')"
+              class="iconfont icon-yinliang"
+              title="调节音量"
+              @click="toggleShowVolume"
             ></div>
-            <div>{{ audioVolume }}</div>
-            <div
-              class="iconfont icon-checkbox-plus-full"
-              @click="handleVolume('add')"
-            ></div>
-          </div>
-        </div>
+          </template>
+        </el-popover>
         <div class="iconfont icon-liebiaoxunhuan"></div>
       </div>
     </div>
@@ -73,7 +68,7 @@ let musicAudio = reactive(store.getMusicAudio);
 
 // 获取当前播放音乐信息
 let currentMusic = reactive(store.getCurrentMusic);
-
+// 监听当前播放音乐
 watch(
   () => store.getCurrentMusic,
   (val) => {
@@ -129,41 +124,22 @@ const toggleHandle = async () => {
 
 // 点击进度条进行跳转
 const progressHandle = (e) => {
-  e.stopPropagation();
-  // console.log(e);
-  // console.log(e.target.offsetWidth);
-  let currPoint = e.pageX;
-  let currWidth = e.target.offsetWidth;
-  console.log(currPoint / currWidth);
-  musicAudio.currentTime = (currPoint / currWidth) * musicAudio.duration;
-  progressWidth.value = Math.floor(
-    (musicAudio.currentTime / currentMusic.time) * 100
-  );
+  musicAudio.currentTime = (e / 100) * musicAudio.duration;
 };
 
 let isShowVolume = ref(false);
-// 鼠标移入/移出显示/隐藏音量控制
-const handleEnter = () => {
-  isShowVolume.value = true;
+// 切换音量调节显示状态
+const toggleShowVolume = () => {
+  isShowVolume.value = !isShowVolume.value;
 };
-const handleLeave = () => {
-  isShowVolume.value = false;
-};
-
-let audioVolume = ref("50%");
-musicAudio.volume = Number(audioVolume.value.slice(0, -1) / 100);
+// 初始化音量大小
+let audioVolume = ref(50);
+// 实际音量大小，范围 0~1
+musicAudio.volume = audioVolume.value / 100;
 // 控制音量加减---注意会出现精度问题
-const handleVolume = (type) => {
-  let volume = Number(musicAudio.volume.toFixed(2));
-  if (volume < 0 || volume > 1) return;
-  let volumeNum = Number(audioVolume.value.slice(0, -1));
-  if (type === "sub") {
-    musicAudio.volume = Number(((volume * 100 - 1) / 100).toFixed(2));
-    audioVolume.value = volumeNum - 1 + "%";
-  } else if (type === "add") {
-    musicAudio.volume = Number(((volume * 100 + 1) / 100).toFixed(2));
-    audioVolume.value = volumeNum + 1 + "%";
-  }
+const handleVolume = (val) => {
+  audioVolume.value = val;
+  musicAudio.volume = val / 100;
 };
 </script>
 
@@ -176,28 +152,16 @@ const handleVolume = (type) => {
   -webkit-app-region: no-drag;
 }
 
-.progress-container {
-  height: 5px;
-  width: 100%;
-  background-color: #e3e3e3;
-  cursor: pointer;
-  .progress {
-    // width: 20%;
-    height: 100%;
-    background-color: #27c448;
-    position: relative;
-    &:hover::after {
-      content: "";
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #f00;
-      position: absolute;
-      top: -50%;
-      right: 0;
-    }
-  }
+:deep(.el-slider__bar) {
+  background-color: #27c448;
 }
+:deep(.el-slider) {
+  --el-slider-main-bg-color: #27c448;
+  --el-slider-button-size: 15px;
+  --el-slider-button-wrapper-size: 15px;
+  --el-slider-button-wrapper-offset: -9px;
+}
+
 .footer-container {
   height: calc(100% - 3px);
   display: flex;
@@ -248,26 +212,6 @@ const handleVolume = (type) => {
       height: 20px;
       font-size: 16px;
       cursor: pointer;
-      &.icon-yinliang {
-        position: relative;
-        .volume {
-          position: absolute;
-          top: -40px;
-          left: -30px;
-          display: flex;
-          padding: 10px 5px;
-          background-color: #fff;
-          box-shadow: 0 0 5px #ccc;
-          justify-content: space-evenly;
-          align-items: center;
-          width: 70px;
-          height: 40px;
-          > .iconfont {
-            width: 18px;
-            height: 19px;
-          }
-        }
-      }
       // border: 1px solid #000;
     }
   }
@@ -275,12 +219,13 @@ const handleVolume = (type) => {
 .music-img {
   width: 50px;
   height: 50px;
-  border: 1px solid #d3d3d3;
+  // border: 1px solid #d3d3d3;
   margin-right: 5px;
   border-radius: 3px;
+  overflow: hidden;
   cursor: pointer;
   position: relative;
-  img {
+  > img {
     width: 100%;
     height: 100%;
   }
@@ -293,8 +238,8 @@ const handleVolume = (type) => {
     border-radius: 3px;
     background-size: 65% 80%;
     position: absolute;
-    top: -1px;
-    left: -1px;
+    top: 0;
+    left: 0;
     opacity: 0;
   }
   &:hover::before {
