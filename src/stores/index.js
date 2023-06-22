@@ -4,9 +4,10 @@ import { toRaw } from "vue";
 export const useMusicStore = defineStore("music", {
   state: () => {
     return {
-      currentMusic: JSON.parse(localStorage.getItem("currentMusic")) || {},
-      isPlay: false,
-      musicAudio: new Audio(),
+      currentMusic: JSON.parse(localStorage.getItem("currentMusic")) || {}, //当前音乐
+      isPlay: false, // 是否在播放
+      musicAudio: new Audio(), // 播放音乐
+      keywords: "", // 搜索关键词
     };
   },
   getters: {
@@ -21,6 +22,10 @@ export const useMusicStore = defineStore("music", {
     // audio对象
     getMusicAudio(state) {
       return state.musicAudio;
+    },
+    // 获取搜索关键词
+    getSearchWords(state) {
+      return state.keywords;
     },
   },
   actions: {
@@ -38,6 +43,7 @@ export const useMusicStore = defineStore("music", {
     },
     // 设置当前播放音乐
     setCurrMusic(currMusic) {
+      console.log(currMusic);
       this.currentMusic = currMusic;
       this.musicAudio.src = currMusic.path;
       this.saveCurrentMusic();
@@ -76,6 +82,10 @@ export const useMusicStore = defineStore("music", {
       } else {
         this.musicAudio.pause();
       }
+    },
+    // 设置搜索关键词
+    saveSearchWords(value) {
+      this.keywords = value;
     },
   },
 });

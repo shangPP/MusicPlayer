@@ -6,6 +6,7 @@
     "src/**/*.vue",
     "controller/musicDataStore.js"
   ],
+  // "moduleResolution": "node",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

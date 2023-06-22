@@ -3,7 +3,7 @@ const DataStore = require("./musicDataStore");
 
 const myStore = new DataStore({ name: "Local Music Data" });
 
-// 添加音乐
+// 添加本地音乐
 ipcMain.handle("on-addMusic-event", async (e) => {
   let res = await openFile();
   if (!res) return myStore.getTracks();

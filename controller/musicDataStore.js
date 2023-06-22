@@ -28,7 +28,7 @@ class DataStore extends Store {
   getTracks() {
     return this.get("tracks") || [];
   }
-  // 添加音乐
+  // 添加本地音乐
   async addTracks(tracks) {
     // 添加并去重（取出没有保存的）
     // 获取歌曲信息

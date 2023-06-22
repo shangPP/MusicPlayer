@@ -30,43 +30,102 @@
         <div class="music-time">时长</div>
       </div>
       <div class="list-body">
-        <div
-          class="list-body-item"
-          v-for="(item, i) of musicFilesPath"
-          :key="item.id"
-          @mouseenter="handleEnter(item)"
-          @mouseleave="handleLeave(item)"
-          :class="{ activeMusic: item.id === currentMusic.id }"
-        >
-          <div class="music-choose" v-show="isShowCheckBox">
-            <el-checkbox
-              v-model="item.isCheckBox"
-              @change="toggleChoose(item)"
-              label=""
+        <!-- 本地歌曲 -->
+        <template v-if="keywords == ''">
+          <div
+            class="list-body-item"
+            v-for="(item, i) of musicFilesPath"
+            :key="item.id"
+            @mouseenter="handleEnter(item)"
+            @mouseleave="handleLeave(item)"
+            :class="{ activeMusic: item.id === currentMusic.id }"
+          >
+            <div class="music-choose" v-show="isShowCheckBox">
+              <el-checkbox
+                v-model="item.isCheckBox"
+                @change="toggleChoose(item)"
+                label=""
+              />
+            </div>
+            <div class="music-name">
+              <div class="name-text" :title="item.name">
+                {{ item.name }}
+              </div>
+              <div
+                class="music-btns"
+                v-show="isShowMusicBtns && item.id === currentId"
+              >
+                <div
+                  class="iconfont icon-play"
+                  title="播放"
+                  @click="handlePlay(item)"
+                ></div>
+                <div
+                  class="iconfont icon-delete"
+                  title="删除"
+                  @click="handleDelete(item)"
+                ></div>
+              </div>
+            </div>
+            <div class="music-singer" :title="item.singer">
+              {{ item.singer }}
+            </div>
+            <div class="music-from">专辑名</div>
+            <div class="music-time">{{ convertDuration(item.time) }}</div>
+          </div>
+        </template>
+        <!-- 搜索歌曲 -->
+        <template v-else>
+          <div
+            class="list-body-item"
+            v-for="(item, i) of searchLists"
+            :key="item.id"
+            @mouseenter="handleEnter(item)"
+            @mouseleave="handleLeave(item)"
+            :class="{ activeMusic: item.id === currentMusic.id }"
+          >
+            <div class="music-choose" v-show="isShowCheckBox">
+              <el-checkbox
+                v-model="item.isCheckBox"
+                @change="toggleChoose(item)"
+                label=""
+              />
+            </div>
+            <div class="music-name">
+              <div class="name-text" :title="item.name">
+                {{ item.name }}
+              </div>
+              <div
+                class="music-btns"
+                v-show="isShowMusicBtns && item.id === currentId"
+              >
+                <div
+                  class="iconfont icon-play"
+                  title="播放"
+                  @click="handlePlay(item)"
+                ></div>
+                <div
+                  class="iconfont icon-delete"
+                  title="添加"
+                  @click="handleAdd(item)"
+                ></div>
+              </div>
+            </div>
+            <div class="music-singer" :title="item.singer">
+              {{ item.singer }}
+            </div>
+            <div class="music-from">专辑名</div>
+            <div class="music-time">{{ convertDuration(item.time) }}</div>
+          </div>
+          <div class="pagination">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="searchMusicTotal"
+              @current-change="handleCurrentChange"
             />
           </div>
-          <div class="music-name">
-            <span :title="item.name">{{ item.name }}</span>
-            <div
-              class="music-btns"
-              v-show="isShowMusicBtns && item.id === currentId"
-            >
-              <div
-                class="iconfont icon-play"
-                title="播放"
-                @click="handlePlay(item)"
-              ></div>
-              <div
-                class="iconfont icon-delete"
-                title="删除"
-                @click="handleDelete(item)"
-              ></div>
-            </div>
-          </div>
-          <div class="music-singer" :title="item.singer">{{ item.singer }}</div>
-          <div class="music-from">专辑名</div>
-          <div class="music-time">{{ convertDuration(item.time) }}</div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -74,6 +133,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, toRaw, watch, computed } from "vue";
+import bus from "@/utils/eventBus.js";
 import { convertDuration } from "@/utils/helper.js";
 import { useMusicStore } from "@/stores/index.js";
 const store = useMusicStore();
@@ -101,16 +161,45 @@ const handleLeave = (item) => {
 
 // 音乐播放
 const handlePlay = async (item) => {
-  currentMusic = item;
-  currentId.value = item.id;
-  await store.setCurrMusic(item);
-  store.setTogglePlay(true);
-  store.toggleMusic();
+  if (keywords.value == "") {
+    currentMusic = item;
+    currentId.value = item.id;
+    await store.setCurrMusic(item);
+    store.setTogglePlay(true);
+    store.toggleMusic();
+  } else {
+    const res = await myApi.playSearchMusic(toRaw(item));
+    const result = JSON.parse(res.slice(res.indexOf("{"), -2));
+    console.log(result);
+    if (result.status == 1) {
+      const data = result.data;
+      const music = {
+        fileName: `${data.song_name} - ${data.author_name}`,
+        id: data.hash,
+        lyrics: data.lyrics,
+        music_from: data.album_name,
+        music_img: data.img,
+        name: data.song_name,
+        path: data.play_url,
+        singer: data.author_name,
+        time: data.timelength / 1000,
+        timelength: data.timelength / 1000,
+        type: data.play_url.slice(-3),
+      };
+      store.setCurrMusic(music);
+      store.setTogglePlay(true);
+      store.toggleMusic();
+      currentMusic = item;
+      currentId.value = item.id;
+    }
+  }
 };
 // 音乐删除
 const handleDelete = async (item) => {
   musicFilesPath.value = await myApi.delMusic(toRaw(item).id);
 };
+// 音乐添加--添加到歌单
+const handleAdd = () => {};
 
 // 是否展示checkbox
 const isShowCheckBox = ref(false);
@@ -173,6 +262,45 @@ watch(
   },
   { deep: true }
 );
+
+// 搜索关键词
+const keywords = ref(store.getSearchWords);
+// 搜索歌曲列表
+const searchLists = ref([]);
+// 搜索歌曲总数
+const searchMusicTotal = ref(0);
+bus.on("searchMusicLists", (res) => {
+  // console.log(res);
+  searchMusicTotal.value = res.total;
+  keywords.value = store.getSearchWords;
+  searchLists.value = res.lists.map((item) => {
+    return {
+      FileHash: item.FileHash,
+      AlbumID: item.AlbumID,
+      name: item.SongName,
+      singer: item.SingerName,
+      music_from: item.AlbumName,
+      time: item.Duration,
+    };
+  });
+});
+const handleCurrentChange = async (val) => {
+  const res = await myApi.searchMusic(keywords.value, val);
+  if (res.status == 1) {
+    searchMusicTotal.value = res.data.total;
+    keywords.value = store.getSearchWords;
+    searchLists.value = res.data.lists.map((item) => {
+      return {
+        FileHash: item.FileHash,
+        AlbumID: item.AlbumID,
+        name: item.SongName,
+        singer: item.SingerName,
+        music_from: item.AlbumName,
+        time: item.Duration,
+      };
+    });
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -237,18 +365,18 @@ watch(
       width: 40px;
     }
     .music-name {
-      flex: 3;
+      // flex: 3;
+      width: calc(50% - 40px);
       padding-left: 5px;
-      display: flex;
-      justify-content: space-between;
-      span {
-        max-width: 70%;
+      .name-text {
+        float: left;
+        width: calc(80% - 5px - 20px);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        word-wrap: normal;
       }
       .music-btns {
+        float: right;
         width: 20%;
         display: flex;
         margin-right: 20px;
@@ -259,17 +387,20 @@ watch(
       }
     }
     .music-singer {
-      flex: 2;
+      // flex: 2;
+      width: 20%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       word-wrap: normal;
     }
     .music-from {
-      flex: 2;
+      // flex: 2;
+      width: 20%;
     }
     .music-time {
-      flex: 1;
+      // flex: 1;
+      width: 10%;
     }
   }
   .list-head {
@@ -286,13 +417,16 @@ watch(
     .list-body-item {
       height: 30px;
       line-height: 30px;
-      display: flex;
-      flex-direction: row;
       .music-item();
       &.activeMusic,
       &:hover {
         background-color: #e3e3e3;
       }
+    }
+    .pagination {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
     }
   }
 }

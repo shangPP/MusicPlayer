@@ -11,6 +11,7 @@ process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
 require("./controller/addMusic");
 require("./controller/controlMusic");
+require("./controller/searchMusic");
 
 let win = null;
 
@@ -37,6 +38,7 @@ const createWindow = () => {
       // 定义预加载的js
       preload: path.resolve(__dirname, "./preload/index.js"),
       nodeIntegration: true, //可以使用nodeapi
+      // contextIsolation: false,
       webSecurity: false,
     },
   });
@@ -66,7 +68,7 @@ app.whenReady().then(() => {
 // 关闭窗口
 app.on("window-all-closed", () => {
   // 苹果 关闭常驻dock栏
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== "darwin") app.quit();
 });
 
 // 最小化

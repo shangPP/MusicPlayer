@@ -15,7 +15,7 @@ const maxWindow = () => {
 const closeWindow = () => {
   ipcRenderer.send("window-close");
 };
-// 添加音乐
+// 添加本地音乐
 const addMusic = async (res) => {
   return await ipcRenderer.invoke("on-addMusic-event", res);
 };
@@ -35,6 +35,14 @@ const getNextMusic = (currentMusic) => {
 const delMusic = (musicId) => {
   return ipcRenderer.invoke("on-delMusic-event", musicId);
 };
+// 搜索歌曲
+const searchMusic = (keywords, page) => {
+  return ipcRenderer.invoke("on-search-music", keywords, page);
+};
+// 播放搜索的歌曲
+const playSearchMusic = (music) => {
+  return ipcRenderer.invoke("on-play-search-music", music);
+}
 
 // 绑定到浏览器window上
 contextBridge.exposeInMainWorld("myApi", {
@@ -45,5 +53,7 @@ contextBridge.exposeInMainWorld("myApi", {
   getMusic,
   getPrevMusic,
   getNextMusic,
-  delMusic
+  delMusic,
+  searchMusic,
+  playSearchMusic
 });

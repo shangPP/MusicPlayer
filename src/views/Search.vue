@@ -24,12 +24,20 @@
 import { ref } from "vue";
 import WindowHandles from "../components/WindowHandles.vue";
 import { Search } from "@element-plus/icons-vue";
+import bus from "@/utils/eventBus.js";
+import { useMusicStore } from "@/stores/index";
+const store = useMusicStore();
 
 // 搜索关键词
 const searchValue = ref("");
-const searchValueChange = (value) => {
-  console.log(value);
-  console.log(searchValue.value);
+// 搜索结果
+const searchLists = ref([]);
+const searchValueChange = async (value) => {
+  store.saveSearchWords(value);
+  const res = await myApi.searchMusic(value);
+  if (res.status == 1) {
+    bus.emit("searchMusicLists", res.data);
+  }
 };
 </script>
 

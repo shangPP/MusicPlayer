@@ -3,14 +3,14 @@
  * 函数返回值: promise对象
  * */
 // import ajax from "./ajax";
-const { ajax, jsonp } = require("./ajax.js");
+const { ajax } = require("./ajax.js");
 // const BASE_URL = 'http://localhost:4000'
 // const BASE_URL = "/api";
 
 // 根据关键词搜索歌曲
-const reqSearch = (keyword) =>
+const reqSearch = (keyword, page = 1) =>
   ajax(
-    `https://songsearch.kugou.com/song_search_v2?keyword=${keyword}&page=1&pagesize=30`
+    `https://songsearch.kugou.com/song_search_v2?keyword=${keyword}&page=${page}&pagesize=10`
   );
 // 获取歌词
 const reqGetLyrics = (hash, album_id) =>
