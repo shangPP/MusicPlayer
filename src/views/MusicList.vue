@@ -70,7 +70,9 @@
             <div class="music-singer" :title="item.singer">
               {{ item.singer }}
             </div>
-            <div class="music-from">专辑名</div>
+            <div class="music-from" :title="item.music_from">
+              {{ item.music_from }}
+            </div>
             <div class="music-time">{{ convertDuration(item.time) }}</div>
           </div>
         </template>
@@ -105,7 +107,7 @@
                   @click="handlePlay(item)"
                 ></div>
                 <div
-                  class="iconfont icon-delete"
+                  class="iconfont icon-checkbox-plus-full"
                   title="添加"
                   @click="handleAdd(item)"
                 ></div>
@@ -114,7 +116,9 @@
             <div class="music-singer" :title="item.singer">
               {{ item.singer }}
             </div>
-            <div class="music-from">专辑名</div>
+            <div class="music-from" :title="item.music_from">
+              {{ item.music_from }}
+            </div>
             <div class="music-time">{{ convertDuration(item.time) }}</div>
           </div>
           <div class="pagination">
@@ -170,7 +174,7 @@ const handlePlay = async (item) => {
   } else {
     const res = await myApi.playSearchMusic(toRaw(item));
     const result = JSON.parse(res.slice(res.indexOf("{"), -2));
-    console.log(result);
+    // console.log(result);
     if (result.status == 1) {
       const data = result.data;
       const music = {
@@ -199,7 +203,9 @@ const handleDelete = async (item) => {
   musicFilesPath.value = await myApi.delMusic(toRaw(item).id);
 };
 // 音乐添加--添加到歌单
-const handleAdd = () => {};
+const handleAdd = async (item) => {
+  musicFilesPath.value = await myApi.addPlaySearchMusic(toRaw(item));
+};
 
 // 是否展示checkbox
 const isShowCheckBox = ref(false);
@@ -269,6 +275,7 @@ const keywords = ref(store.getSearchWords);
 const searchLists = ref([]);
 // 搜索歌曲总数
 const searchMusicTotal = ref(0);
+// 获取搜索的结果
 bus.on("searchMusicLists", (res) => {
   // console.log(res);
   searchMusicTotal.value = res.total;
@@ -284,6 +291,7 @@ bus.on("searchMusicLists", (res) => {
     };
   });
 });
+// 页码改变
 const handleCurrentChange = async (val) => {
   const res = await myApi.searchMusic(keywords.value, val);
   if (res.status == 1) {
@@ -397,6 +405,10 @@ const handleCurrentChange = async (val) => {
     .music-from {
       // flex: 2;
       width: 20%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-wrap: normal;
     }
     .music-time {
       // flex: 1;

@@ -42,7 +42,11 @@ const searchMusic = (keywords, page) => {
 // 播放搜索的歌曲
 const playSearchMusic = (music) => {
   return ipcRenderer.invoke("on-play-search-music", music);
-}
+};
+// 添加搜索的歌曲
+const addPlaySearchMusic = (music) => {
+  return ipcRenderer.invoke("on-add-search-music", music);
+};
 
 // 绑定到浏览器window上
 contextBridge.exposeInMainWorld("myApi", {
@@ -55,5 +59,6 @@ contextBridge.exposeInMainWorld("myApi", {
   getNextMusic,
   delMusic,
   searchMusic,
-  playSearchMusic
+  playSearchMusic,
+  addPlaySearchMusic,
 });

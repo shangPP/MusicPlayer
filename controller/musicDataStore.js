@@ -8,6 +8,7 @@ const path = require("path");
 // const load = require('audio-loader'); //会阻止控制台打开
 const { app } = require("electron");
 const { reqSearch, reqGetLyrics } = require("../src/api/index.js");
+const { resolve } = require("path");
 // import Store from 'electron-store'
 // import { v4: uuidv4 } from 'uuid'
 // import path from 'path'
@@ -144,6 +145,31 @@ class DataStore extends Store {
     } else {
       return tracks[index + 1];
     }
+  }
+  async addSearchTrack(data) {
+    const music = {
+      id: uuidv4(),
+      path: data.play_url,
+      name: data.song_name,
+      singer: data.author_name,
+      lyrics: data.lyrics,
+      music_from: data.album_name,
+      music_img: data.img,
+      timelength: data.timelength / 1000,
+      time: data.timelength / 1000,
+      fileName: `${data.song_name} - ${data.author_name}`,
+      type: data.play_url.slice(-3),
+    };
+    // 去重
+    return await new Promise((resolve) => {
+      resolve(music);
+    }).then(async (val) => {
+      const currentTracksPath = this.getTracks().map((track) => track.path);
+      if (!currentTracksPath.includes(val.path)) {
+        this.tracks = [...this.tracks, val];
+        return this.saveTracks();
+      }
+    });
   }
 }
 

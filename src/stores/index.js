@@ -35,7 +35,7 @@ export const useMusicStore = defineStore("music", {
       localStorage.setItem("currentMusic", JSON.stringify(this.currentMusic));
     },
     cleanCurrentMusic() {
-      let allMusic = myApi.getTracks()
+      let allMusic = myApi.getTracks();
       if (allMusic.length == 0) {
         this.currentMusic = {};
         this.saveCurrentMusic();
@@ -43,7 +43,7 @@ export const useMusicStore = defineStore("music", {
     },
     // 设置当前播放音乐
     setCurrMusic(currMusic) {
-      console.log(currMusic);
+      // console.log(currMusic);
       this.currentMusic = currMusic;
       this.musicAudio.src = currMusic.path;
       this.saveCurrentMusic();

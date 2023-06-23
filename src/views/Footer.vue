@@ -14,7 +14,9 @@
             <img :src="currentMusic.music_img" alt="" />
           </div>
           <div class="music-info">
-            <span v-if="currentMusic.name"
+            <span
+              v-if="currentMusic.name"
+              :title="currentMusic.name + '-' + currentMusic.singer"
               >{{ currentMusic.name }}-{{ currentMusic.singer }}</span
             >
             <span v-else></span>
@@ -91,13 +93,14 @@ let progressWidth = ref(0);
 // 当前播放时间
 let currentTime = ref(0);
 musicAudio.ontimeupdate = (event) => {
-  // console.log(musicAudio.currentTime);
+  // console.log(musicAudio.currentTime, currentMusic.time);
   bus.emit("musicTime", musicAudio.currentTime);
   currentTime.value = musicAudio.currentTime;
   progressWidth.value = Math.floor(
     (musicAudio.currentTime / currentMusic.time) * 100
   );
-  if (currentMusic.time - musicAudio.currentTime < 0.1) {
+  if (currentMusic.time - musicAudio.currentTime < 0.4) {
+    currentTime.value = currentMusic.time;
     progressWidth.value = 100;
     nextHandle();
   }
@@ -115,6 +118,10 @@ const nextHandle = async () => {
 };
 
 let isPlay = ref(store.getPlayStatus);
+watch(
+  () => store.getPlayStatus,
+  (val) => (isPlay.value = val)
+);
 // 播放/暂停切换
 const toggleHandle = async () => {
   isPlay.value = store.setTogglePlay(!store.getPlayStatus);
@@ -166,7 +173,7 @@ const handleVolume = (val) => {
   height: calc(100% - 3px);
   display: flex;
   .music-left {
-    flex: 1;
+    flex: 2;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -202,7 +209,7 @@ const handleVolume = (val) => {
     }
   }
   .music-right {
-    flex: 1;
+    flex: 2;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -248,8 +255,20 @@ const handleVolume = (val) => {
 }
 .music-info {
   height: 50px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  span:first-child {
+    display: block;
+    width: 100%;
+    height: 2.2rem;
+    overflow: hidden; //溢出内容隐藏
+    text-overflow: ellipsis; //文本溢出部分用省略号表示
+    display: -webkit-box; //特别显示模式
+    -webkit-line-clamp: 2; //行数
+    line-clamp: 2;
+  }
 }
 </style>
